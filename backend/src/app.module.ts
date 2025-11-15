@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SupabaseModule } from './supabase/supabase.module';
-import { UserModule } from './cases/auth/users/user.module';
+import { UserModule } from './cases/users/user.module';
 import { AuthModule } from './cases/auth/auth.module';
 
 @Module({

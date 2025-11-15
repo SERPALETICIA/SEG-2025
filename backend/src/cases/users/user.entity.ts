@@ -16,4 +16,10 @@ export class User {
 
   @Column({default: false})
   hasMFA: boolean;
+
+  @Column({nullable: true})
+  mfaFactorId: string;
+
+  @Column({default: false})
+  isMfaSetupComplete: boolean;
 }

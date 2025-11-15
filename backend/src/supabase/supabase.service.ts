@@ -1,30 +1,25 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
-import { SupabaseClient, createClient } from '@supabase/supabase-js'
+import { Injectable, Inject } from '@nestjs/common';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
-export class SupabaseService implements OnModuleInit, OnModuleDestroy {
-  private client!: SupabaseClient
+export class SupabaseService {
+  constructor(
+    @Inject('SUPABASE_CLIENT') private readonly client: SupabaseClient,
+    @Inject('SUPABASE_URL') private readonly supabaseUrl: string,
+    @Inject('SUPABASE_KEY') private readonly supabaseKey: string,
+  ) { }
 
-  private readonly supabaseUrl = process.env.SUPABASE_URL!
-  private readonly supabaseKey = process.env.SUPABASE_KEY!
+  // client public sem auth do usuario
+  get clientPublic(): SupabaseClient {
+    return this.client;
+  }
 
-  onModuleInit() {
-    this.client = createClient(this.supabaseUrl, this.supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
+  //  cria um client autenticado com o token do user
+  getClientForToken(token: string): SupabaseClient {
+    return createClient(this.supabaseUrl, this.supabaseKey, {
+      global: {
+        headers: { Authorization: `Bearer ${token}` },
       },
-    })
-  }
-
-  onModuleDestroy() {
-    this.client = undefined as any
-  }
-
-  getClient(): SupabaseClient {
-    if (!this.client) {
-      throw new Error('Supabase client is not initialized.')
-    }
-    return this.client
+    });
   }
 }
